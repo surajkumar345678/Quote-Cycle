@@ -6,3 +6,4 @@ Hero patterns vector background is used in styling.<br>
 At the bottom, two buttons. First one is new quote button and the second is twitter button. It will open twitter in new tab and share quote if you want.<br>
 A loader is used that loads between quotes.<br>
 This website is also mobile responsive as well.
+![image](https://user-images.githubusercontent.com/60316890/177035426-036544b4-3f2a-4de5-a178-5236c5536efb.png)
