@@ -3,60 +3,73 @@ const quoteText = document.getElementById('quote');
 const authorText = document.getElementById('author');
 const twitterBtn = document.getElementById('twitter');
 const newQuoteBtn = document.getElementById('new-quote');
-const loader=document.getElementById('loader');
+const loader = document.getElementById('loader');
 let apiQuotes = [];
 
-// loader
-function loading() {
+// Loader Functions
+function showLoader() {
     loader.hidden = false;
-    quoteContainer.hidden=true;
+    quoteContainer.hidden = true;
 }
 
-function complete(){
-    quoteContainer.hidden=false;
-    loader.hidden=true;
-
+function hideLoader() {
+    loader.hidden = true;
+    quoteContainer.hidden = false;
 }
 
+// Error Handling
+function showError(message) {
+    const errorMessage = document.createElement('div');
+    errorMessage.classList.add('error-message');
+    errorMessage.textContent = message;
+    quoteContainer.appendChild(errorMessage);
+}
 
-// show new quote
+// Show New Quote
 function newQuote() {
-    loading();
-    // select random quote
+    showLoader();
     const quote = apiQuotes[Math.floor(Math.random() * apiQuotes.length)];
-    // empty author field
     if (!quote.author) {
         authorText.textContent = 'Unknown';
     } else {
         authorText.textContent = quote.author;
     }
-
+    if (quote.text.length > 120) {
+        quoteText.classList.add('long-quote');
+    } else {
+        quoteText.classList.remove('long-quote');
+    }
     quoteText.textContent = quote.text;
-    complete();
+    hideLoader();
 }
 
-// quotes api
+// Fetch Quotes
 async function getQuotes() {
-    loading();
+    showLoader();
     const apiUrl = 'https://type.fit/api/quotes';
     try {
         const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error('Failed to fetch quotes');
+        }
         apiQuotes = await response.json();
         newQuote();
     } catch (error) {
-
+        showError('Failed to fetch quotes. Please try again later.');
     }
 }
 
-// Tweet quote
+// Tweet Quote
 function tweetQuote() {
-    const twitterUrl = `https://twitter.com/intent/tweet?text=${quoteText.textContent} - ${authorText.textContent}`;
+    const quote = quoteText.textContent;
+    const author = authorText.textContent;
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(`${quote} - ${author}`)}`;
     window.open(twitterUrl, '_blank');
 }
 
-// new quote button
+// Event Listeners
 newQuoteBtn.addEventListener('click', newQuote);
-// tweetQuote button
 twitterBtn.addEventListener('click', tweetQuote);
 
+// Initialize
 getQuotes();
